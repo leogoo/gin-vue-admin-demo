@@ -1,8 +1,7 @@
 <script setup lang="ts">
 </script>
 <template>
-  <div>1111</div>
-  <el-input placeholder=""></el-input>
+  <router-view></router-view>
 </template>
 
 <style scoped>
