@@ -1,6 +1,4 @@
 import vuePlugin from '@vitejs/plugin-vue'
-import * as dotenv from 'dotenv'
-import * as fs from 'fs'
 import * as path from 'path'
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
