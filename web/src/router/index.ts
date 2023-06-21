@@ -15,9 +15,32 @@ const routes = [
   },
   {
     path: '/',
-    name: 'home',
-    meta: { title: '主页'},
-    component: () => import('@/view/Home.vue')
+    name: 'layout',
+    component: () => import('@/view/Home.vue'),
+    children: [
+      {
+        path: 'admin',
+        meta: { title: '超级管理员'},
+        children: [
+          {
+            path: 'authority',
+            meta: { title: '角色管理'},
+            component: () => import('@/view/Admin/Authority.vue'),
+          },
+          {
+            path: 'user',
+            meta: { title: '用户管理'},
+            component: () => import('@/view/Admin/User.vue'),
+          },
+          {
+            path: 'operation',
+            meta: { title: '操作历史'},
+            component: () => import('@/view/Admin/Operation.vue'),
+          },
+          
+        ]
+      },
+    ]
   },
 ]
 // 创建路由实例并传递 `routes` 配置
