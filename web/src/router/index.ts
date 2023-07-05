@@ -16,7 +16,7 @@ const routes = [
   {
     path: '/',
     name: 'layout',
-    component: () => import('@/view/Home.vue'),
+    component: () => import('@/view/Layout.vue'),
     children: [
       {
         path: 'admin',
@@ -37,11 +37,21 @@ const routes = [
             meta: { title: '操作历史'},
             component: () => import('@/view/Admin/Operation.vue'),
           },
-          
+        ]
+      },
+      {
+        path: 'media',
+        meta: { title: '媒体库'},
+        children: [
+          {
+            path: 'fileList',
+            meta: { title: '文件列表'},
+            component: () => import('@/view/Media/FileList.vue'),
+          },
         ]
       },
     ]
-  },
+  }
 ]
 // 创建路由实例并传递 `routes` 配置
 const router = createRouter({
