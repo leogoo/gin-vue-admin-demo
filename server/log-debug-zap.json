@@ -1,3 +1,0 @@
-{"level":"info","ts":"2023-06-19T17:17:02.190+0800","caller":"server/main.go:41","msg":"write log to file","url":"http://www.diff-log-level.com","time":3}
-{"level":"info","ts":"2023-06-19T17:22:32.359+0800","caller":"server/main.go:41","msg":"write log to file","url":"http://www.diff-log-level.com","time":3}
-{"level":"error","ts":"2023-06-19T17:22:32.359+0800","caller":"server/main.go:45","msg":"first err"}

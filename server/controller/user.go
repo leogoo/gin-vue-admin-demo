@@ -14,9 +14,9 @@ func GetAllUser() []*entity.User {
 	return userList
 }
 
-func CreateUser(user entity.User) {
+func CreateUser(user entity.User) error {
 	err := service.CreateUser(&user)
-	fmt.Println(err)
+	return err
 }
 
 func CheckAuth(username string, password string) bool {

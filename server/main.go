@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"log"
 	"os"
+	rabbitmq "server/amqp"
 	"server/controller"
-	mysql "server/dao"
-	"server/entity"
+	dao "server/dao"
 	"server/middleWare"
 	"server/routers"
 	"server/utils"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type User struct {
@@ -21,26 +21,35 @@ type User struct {
 }
 
 func main() {
-	f, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	// 创建文件输出器
+	file, _ := os.Create("logs/app.log")
+	defer file.Close()
+
+	// 创建 zapcore.WriteSyncer 对象
+	writeSyncer := zapcore.AddSync(file)
+
+	// 创建 zapcore.Encoder 对象
+	encoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+
+	// 创建 zapcore.Core 对象
+	core := zapcore.NewCore(encoder, writeSyncer, zapcore.DebugLevel)
+
+	// 创建 zap logger 对象
+	logger := zap.New(core)
 
 	r := gin.Default()
-	mysql.InitMysql()
-	r.Use(middleWare.Cors())
+	dao.InitMysql()
+	dao.InitRedis()
+	rabbitmq.InitAmqp()
 
-	r.GET("/test", func(ctx *gin.Context) {
-		fmt.Println(1111)
-		pusher := ctx.Writer.Pusher()
-		fmt.Println("pusher", pusher)
-		if pusher != nil {
-			fmt.Println(2222)
-			if err := pusher.Push("gin.log", nil); err != nil {
-				log.Printf("push error %v", err)
-			}
-		}
-		ctx.JSON(200, gin.H{
-			"status": "success",
-		})
+	r.Use(middleWare.Cors())
+	// 注册 zap 中间件
+	r.Use(func(c *gin.Context) {
+		// 将 zap logger 对象注入 gin 的上下文中
+		c.Set("logger", logger)
+
+		// 继续处理请求
+		c.Next()
 	})
 
 	// 登录，校验用户名和密码，生成token
@@ -59,14 +68,12 @@ func main() {
 		})
 	})
 
-	r.POST("/user/add", func(ctx *gin.Context) {
-		json := entity.User{}
-		ctx.BindJSON(&json)
+	// 静态资源托管
+	r.StaticFS("/static", gin.Dir("./upload", true))
 
-		controller.CreateUser(json)
-	})
-
-	r.Use(middleWare.JWT())
+	// r.Use(middleWare.JWT())
 	routers.SetUserRouter(r)
+	routers.SetMediaRouter(r)
+
 	r.Run(":8080")
 }

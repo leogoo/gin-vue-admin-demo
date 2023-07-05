@@ -3,3 +3,7 @@ jwt:
   expires-time: 7d
   buffer-time: 1d
   issuer: qmPlus
+
+redis:
+  url: localhost:6379
+  password: "123456"
